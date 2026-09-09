@@ -1,0 +1,19 @@
+{
+  "name": "explore-jharkhand",
+  "version": "1.0.0",
+  "description": "Production-Ready Smart Tourism Platform for Explore Jharkhand - SIH2025 (SIH25032)",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "server": "cd server && npm start",
+    "client": "cd client && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "cd client && npm run build",
+    "install-all": "npm install && cd server && npm install && cd ../client && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "author": "Antigravity Dev Team",
+  "license": "MIT"
+}

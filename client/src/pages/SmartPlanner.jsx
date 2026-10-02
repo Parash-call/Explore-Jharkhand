@@ -16,14 +16,21 @@ const SmartPlanner = () => {
   const [interests, setInterests] = useState(['waterfall', 'wildlife', 'temple', 'adventure']);
   const [loading, setLoading] = useState(false);
   const [plan, setPlan] = useState(null);
+  const [error, setError] = useState('');
 
   const availableInterests = [
     { id: 'waterfall', label: 'Waterfalls & Rivers', icon: '🌊' },
     { id: 'wildlife', label: 'Wildlife & Parks', icon: '🐅' },
     { id: 'temple', label: 'Temples & Heritage', icon: '🛕' },
-    { id: 'festival', label: 'Tribal Festivals', icon: '🥁' },
+    { id: 'festival', label: 'Festivals & Culture', icon: '🥁' },
     { id: 'food', label: 'Local Food & Cuisine', icon: '🍲' },
     { id: 'adventure', label: 'Hill Valleys & Boating', icon: '⛰️' },
+    { id: 'beach', label: 'Beaches & Coastlines', icon: '🏖️' },
+    { id: 'heritage', label: 'Historic Places', icon: '🏛️' },
+    { id: 'hillstation', label: 'Hill Stations', icon: '🌄' },
+    { id: 'nature', label: 'Nature & Scenic Views', icon: '🌿' },
+    { id: 'culture', label: 'Culture & Lifestyle', icon: '🎭' },
+    { id: 'family', label: 'Family-Friendly', icon: '👨‍👩‍👧‍👦' }
   ];
 
   const toggleInterest = (id) => {
@@ -40,6 +47,8 @@ const SmartPlanner = () => {
     e.preventDefault();
     try {
       setLoading(true);
+      setError('');
+      setPlan(null);
       const res = await API.post('/planner/generate', {
         budget,
         days,
@@ -56,6 +65,7 @@ const SmartPlanner = () => {
         });
       }
     } catch (err) {
+      setError(err.message || 'Unable to generate the itinerary. Please try again.');
       triggerNotification({ title: 'Error', message: err.message, type: 'error' });
     } finally {
       setLoading(false);
@@ -144,6 +154,11 @@ const SmartPlanner = () => {
                 <option value="Deoghar">Deoghar</option>
                 <option value="Dhanbad">Dhanbad</option>
                 <option value="Netarhat">Netarhat</option>
+                <option value="Chennai">Chennai</option>
+                <option value="Madurai">Madurai</option>
+                <option value="Coimbatore">Coimbatore</option>
+                <option value="Ooty">Ooty</option>
+                <option value="Kanyakumari">Kanyakumari</option>
               </select>
             </div>
 
@@ -191,7 +206,19 @@ const SmartPlanner = () => {
 
         {/* Right Output View */}
         <div className="lg:col-span-7">
-          {plan ? (
+          {error ? (
+            <div className="min-h-[400px] flex flex-col items-center justify-center p-8 rounded-3xl border border-rose-300 bg-rose-50 text-center space-y-3 dark:border-rose-500/30 dark:bg-rose-950/20">
+              <h3 className="text-xl font-bold text-rose-700 dark:text-rose-300">Itinerary generation failed</h3>
+              <p className="text-sm text-rose-600 dark:text-rose-200">{error}</p>
+              <button
+                type="button"
+                onClick={() => setError('')}
+                className="px-4 py-2 rounded-xl bg-rose-600 text-white text-xs font-bold"
+              >
+                Try Again
+              </button>
+            </div>
+          ) : plan ? (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

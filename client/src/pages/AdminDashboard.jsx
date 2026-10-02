@@ -25,7 +25,7 @@ const AdminDashboard = () => {
     district: 'Ranchi',
     latitude: 23.3441,
     longitude: 85.3096,
-    image_url: 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=1000&q=80',
+    image_url: 'https://commons.wikimedia.org/wiki/Special:FilePath/Hundru_Falls%2C_Jharkhand%2C_India.jpg?width=1280',
     entry_fee: 20,
     opening_hours: '8:00 AM - 5:00 PM',
     best_time: 'October to March'
@@ -36,7 +36,7 @@ const AdminDashboard = () => {
       setLoading(true);
       const [statsRes, destRes, usersRes] = await Promise.all([
         API.get('/admin/stats'),
-        API.get('/destinations'),
+        API.get('/destinations?state=jharkhand'),
         API.get('/admin/users')
       ]);
 

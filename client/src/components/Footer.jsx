@@ -1,8 +1,70 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { FiCompass, FiMapPin, FiPhoneCall, FiMail, FiHeart } from 'react-icons/fi';
 
 const Footer = () => {
+  const location = useLocation();
+  const isTamilNaduRoute = location.pathname.startsWith('/tamil-nadu');
+
+  if (isTamilNaduRoute) {
+    return (
+      <footer className="bg-[#2d0d17] text-[#f5e8d3] pt-12 pb-10 border-t border-[#f2c770]/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-[#f2c770]/15">
+            <div>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#7d2d3c] to-[#d6a75d] flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-[#7d2d3c]/30">
+                  <FiCompass />
+                </div>
+                <span className="text-xl font-bold text-white tracking-tight">Explore Tamil Nadu</span>
+              </div>
+              <p className="mt-4 text-sm leading-relaxed text-[#e7d7c3]">
+                Discover the cultural soul, temple heritage, hill stations, beaches, and wildlife journeys that make Tamil Nadu one of India’s most vibrant travel destinations.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="text-white font-bold text-sm tracking-wider uppercase mb-4">Quick Links</h4>
+              <ul className="space-y-2.5 text-sm text-[#f1dcb8]">
+                <li><Link to="/tamil-nadu" className="hover:text-white transition">Tamil Nadu Home</Link></li>
+                <li><Link to="/destinations?state=tamilnadu" className="hover:text-white transition">Destinations</Link></li>
+                <li><Link to="/planner" className="hover:text-white transition">Trip Planner</Link></li>
+                <li><Link to="/weather" className="hover:text-white transition">Weather</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-white font-bold text-sm tracking-wider uppercase mb-4">Travel Helpline</h4>
+              <ul className="space-y-3 text-sm text-[#f1dcb8]">
+                <li className="flex items-start gap-3">
+                  <FiMapPin className="text-[#f2c770] text-lg mt-0.5" />
+                  <span>Tourism Department, Government of Tamil Nadu</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <FiPhoneCall className="text-[#f2c770] text-lg" />
+                  <span>1800-425-4060</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <FiMail className="text-[#f2c770] text-lg" />
+                  <span>tourism@tn.gov.in</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#e7d7c3]">
+            <p>© 2025-2026 Explore Tamil Nadu • Heritage • Coast • Hills</p>
+            <div className="flex items-center gap-1">
+              <span>Crafted with</span>
+              <FiHeart className="text-rose-400 fill-rose-400 text-sm mx-1" />
+              <span>for Tamil Nadu Tourism</span>
+            </div>
+          </div>
+        </div>
+      </footer>
+    );
+  }
+
   return (
     <footer className="bg-slate-900 text-slate-300 pt-16 pb-12 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

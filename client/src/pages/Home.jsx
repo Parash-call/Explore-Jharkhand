@@ -16,12 +16,13 @@ const Home = () => {
   const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedState, setSelectedState] = useState('jharkhand');
 
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
         setLoading(true);
-        const res = await API.get('/destinations');
+        const res = await API.get(`/destinations?state=${selectedState}`);
         if (res.success) {
           setDestinations(res.destinations);
         }
@@ -32,23 +33,32 @@ const Home = () => {
       }
     };
     fetchHomeData();
-  }, []);
+  }, [selectedState]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      navigate(`/destinations?search=${encodeURIComponent(searchTerm)}`);
+      navigate(`/destinations?state=${selectedState}&search=${encodeURIComponent(searchTerm)}`);
     }
   };
 
-  const categories = [
-    { id: 'waterfall', title: 'Waterfalls', icon: '🌊', count: '98m Highest' },
-    { id: 'wildlife', title: 'Wildlife Safaris', icon: '🐅', count: 'Project Tiger' },
-    { id: 'temple', title: 'Spiritual Temples', icon: '🛕', count: '12 Jyotirlingas' },
-    { id: 'festival', title: 'Tribal Festivals', icon: '🥁', count: 'Sarhul & Karma' },
-    { id: 'food', title: 'Local Delicacies', icon: '🍲', count: 'Dhuska & Rugra' },
-    { id: 'adventure', title: 'Hill Valleys', icon: '⛰️', count: 'Patratu Viewpoint' }
-  ];
+  const categories = selectedState === 'tamilnadu'
+    ? [
+        { id: 'temple', title: 'Temples', icon: '🛕', count: 'Sacred Sites' },
+        { id: 'beach', title: 'Beaches', icon: '🏖️', count: 'Coastal Escapes' },
+        { id: 'hillstation', title: 'Hill Stations', icon: '🌄', count: 'Nilgiri Air' },
+        { id: 'heritage', title: 'Heritage', icon: '🏛️', count: 'Ancient Cities' },
+        { id: 'nature', title: 'Nature', icon: '🌿', count: 'Valleys & Peaks' },
+        { id: 'food', title: 'Food & Culture', icon: '🍲', count: 'South Indian Flavours' }
+      ]
+    : [
+        { id: 'waterfall', title: 'Waterfalls', icon: '🌊', count: '98m Highest' },
+        { id: 'wildlife', title: 'Wildlife Safaris', icon: '🐅', count: 'Project Tiger' },
+        { id: 'temple', title: 'Spiritual Temples', icon: '🛕', count: '12 Jyotirlingas' },
+        { id: 'festival', title: 'Tribal Festivals', icon: '🥁', count: 'Sarhul & Karma' },
+        { id: 'food', title: 'Local Delicacies', icon: '🍲', count: 'Dhuska & Rugra' },
+        { id: 'adventure', title: 'Hill Valleys', icon: '⛰️', count: 'Patratu Viewpoint' }
+      ];
 
   const filteredDestinations = selectedCategory === 'all'
     ? destinations.slice(0, 6)
@@ -74,13 +84,37 @@ const Home = () => {
                 Official SIH 2025 Platform • Code: SIH25032
               </div>
 
+              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white/70 p-1 shadow-sm dark:border-slate-700 dark:bg-slate-900/60">
+                {['jharkhand', 'tamilnadu'].map((state) => (
+                  <button
+                    key={state}
+                    type="button"
+                    onClick={() => {
+                      setSelectedState(state);
+                      if (state === 'tamilnadu') {
+                        navigate('/tamil-nadu');
+                      }
+                    }}
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition ${
+                      selectedState === state
+                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
+                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    {state === 'tamilnadu' ? '🌴 Tamil Nadu' : 'Jharkhand'}
+                  </button>
+                ))}
+              </div>
+
               <h1 className="text-4xl sm:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">
                 Discover the Land of <br />
-                <span className="gradient-text">Waterfalls & Tribal Heritage</span>
+                <span className="gradient-text">{selectedState === 'tamilnadu' ? 'Temples, Coastlines & Culture' : 'Waterfalls & Tribal Heritage'}</span>
               </h1>
 
               <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed mx-auto lg:mx-0">
-                Experience Jharkhand like never before. Real-time Google Maps navigation, live weather forecasts, algorithmic trip planner, and authentic tribal cultural discoveries.
+                {selectedState === 'tamilnadu'
+                  ? 'Explore the vibrant heritage of Tamil Nadu with temple towns, coastal escapes, scenic hill stations, and unforgettable cultural experiences.'
+                  : 'Experience Jharkhand like never before. Real-time Google Maps navigation, live weather forecasts, algorithmic trip planner, and authentic tribal cultural discoveries.'}
               </p>
 
               {/* Search Bar */}
@@ -89,7 +123,7 @@ const Home = () => {
                   <FiMapPin className="text-emerald-600 text-xl ml-3 hidden sm:block" />
                   <input
                     type="text"
-                    placeholder="Search Hundru Falls, Betla, Baidyanath Dham..."
+                    placeholder={selectedState === 'tamilnadu' ? 'Search Marina Beach, Ooty, Meenakshi Temple...' : 'Search Hundru Falls, Betla, Baidyanath Dham...'}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full px-3 py-3 bg-transparent text-slate-900 dark:text-white placeholder-slate-400 text-sm font-medium focus:outline-none"
@@ -106,15 +140,24 @@ const Home = () => {
 
               {/* Quick Feature Badges */}
               <div className="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-xs text-slate-600 dark:text-slate-400 font-semibold">
-                <div className="flex items-center gap-2">
+                <Link
+                  to="/map"
+                  className="flex items-center gap-2 hover:text-emerald-600 dark:hover:text-emerald-400 transition"
+                >
                   <FiCompass className="text-emerald-600 text-base" /> 100% Real Google APIs
-                </div>
-                <div className="flex items-center gap-2">
+                </Link>
+                <Link
+                  to="/destinations"
+                  className="flex items-center gap-2 hover:text-emerald-600 dark:hover:text-emerald-400 transition"
+                >
                   <FiShield className="text-emerald-600 text-base" /> Verified Local Guides
-                </div>
-                <div className="flex items-center gap-2">
+                </Link>
+                <Link
+                  to="/planner"
+                  className="flex items-center gap-2 hover:text-emerald-600 dark:hover:text-emerald-400 transition"
+                >
                   <FiAward className="text-emerald-600 text-base" /> Smart Trip Planner
-                </div>
+                </Link>
               </div>
             </motion.div>
 
@@ -125,12 +168,45 @@ const Home = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="lg:col-span-5 space-y-6"
             >
-              <WeatherCard city="Ranchi" />
+              <WeatherCard city={selectedState === 'tamilnadu' ? 'Chennai' : 'Ranchi'} />
             </motion.div>
 
           </div>
         </div>
       </section>
+
+      {selectedState === 'tamilnadu' && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="rounded-3xl border border-amber-200 bg-gradient-to-r from-amber-50 via-orange-50 to-rose-50 p-6 sm:p-8 shadow-lg dark:border-amber-500/20 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+              <div>
+                <span className="text-xs font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                  Tamil Nadu Highlights
+                </span>
+                <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">
+                  Explore the soul of South India
+                </h2>
+              </div>
+              <div className="text-sm text-slate-600 dark:text-slate-300 font-semibold">
+                Temple towns • coastlines • hill stations
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {[
+                { title: 'Madurai', description: 'Ancient temple heritage, vibrant streets, and spiritual energy.' },
+                { title: 'Mahabalipuram', description: 'Stone carvings, seaside views, and cultural history by the coast.' },
+                { title: 'Ooty', description: 'Cool climate, tea gardens, and scenic mountain escapes.' }
+              ].map((place) => (
+                <div key={place.title} className="rounded-2xl border border-white/60 bg-white/70 p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900/60">
+                  <div className="text-lg font-extrabold text-slate-900 dark:text-white mb-2">{place.title}</div>
+                  <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{place.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Categories Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -139,7 +215,7 @@ const Home = () => {
             Explore Categories
           </span>
           <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">
-            Curated Experiences Across Jharkhand
+            Curated Experiences Across {selectedState === 'tamilnadu' ? 'Tamil Nadu' : 'Jharkhand'}
           </h2>
         </div>
 
@@ -170,11 +246,11 @@ const Home = () => {
               Top Destinations
             </span>
             <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">
-              Must-Visit Places in Jharkhand
+              Must-Visit Places in {selectedState === 'tamilnadu' ? 'Tamil Nadu' : 'Jharkhand'}
             </h2>
           </div>
           <Link
-            to="/destinations"
+            to={selectedState === 'tamilnadu' ? '/tamil-nadu' : `/destinations?state=${selectedState}`}
             className="flex items-center gap-2 text-sm font-bold text-emerald-600 dark:text-emerald-400 hover:gap-3 transition"
           >
             <span>View All Destinations</span>

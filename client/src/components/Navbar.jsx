@@ -19,6 +19,7 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const isTamilNaduRoute = location.pathname.startsWith('/tamil-nadu');
 
   const navLinks = [
     { name: 'Home', path: '/', icon: FiCompass },
@@ -31,20 +32,20 @@ const Navbar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-40 w-full glass-nav transition-all duration-300">
+    <header className={`sticky top-0 z-40 w-full transition-all duration-300 ${isTamilNaduRoute ? 'bg-[#2e0d18]/95 text-white shadow-lg shadow-[#2e0d18]/20 backdrop-blur-xl border-b border-[#f2c770]/20' : 'glass-nav'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         
         {/* Brand Logo */}
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-emerald-600 to-blue-700 flex items-center justify-center text-white shadow-lg shadow-emerald-600/30 group-hover:scale-105 transition-transform">
+        <Link to={isTamilNaduRoute ? '/tamil-nadu' : '/'} className="flex items-center gap-3 group">
+          <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-white shadow-lg transition-transform group-hover:scale-105 ${isTamilNaduRoute ? 'bg-gradient-to-tr from-[#7d2d3c] to-[#d6a75d]' : 'bg-gradient-to-tr from-emerald-600 to-blue-700 shadow-emerald-600/30'}`}>
             <FiCompass className="text-2xl animate-pulse" />
           </div>
           <div>
-            <span className="text-xl font-extrabold tracking-tight gradient-text">
-              Explore Jharkhand
+            <span className={`text-xl font-extrabold tracking-tight ${isTamilNaduRoute ? 'text-white' : 'gradient-text'}`}>
+              {isTamilNaduRoute ? 'Explore Tamil Nadu' : 'Explore Jharkhand'}
             </span>
-            <span className="block text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 tracking-wider uppercase">
-              SIH 2025 • Smart Tourism
+            <span className={`block text-[10px] font-semibold tracking-wider uppercase ${isTamilNaduRoute ? 'text-[#f2c770]' : 'text-emerald-600 dark:text-emerald-400'}`}>
+              {isTamilNaduRoute ? 'Heritage • Coast • Hills' : 'SIH 2025 • Smart Tourism'}
             </span>
           </div>
         </Link>
@@ -60,8 +61,12 @@ const Navbar = () => {
                 to={link.path}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
                   active
-                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
-                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                    ? isTamilNaduRoute
+                      ? 'bg-[#f2c770] text-[#2d0d17] shadow-md shadow-[#f2c770]/30'
+                      : 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
+                    : isTamilNaduRoute
+                      ? 'text-[#f8efe7] hover:bg-white/10'
+                      : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
                 }`}
               >
                 <Icon className="text-base" />
@@ -77,7 +82,7 @@ const Navbar = () => {
           {/* Wishlist Button */}
           <Link
             to="/wishlist"
-            className="relative p-2.5 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            className={`relative p-2.5 rounded-xl transition ${isTamilNaduRoute ? 'text-[#f8efe7] hover:bg-white/10' : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
             title="Wishlist"
           >
             <FiHeart className="text-xl" />
@@ -102,12 +107,12 @@ const Navbar = () => {
             <div className="relative">
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="flex items-center gap-2.5 p-1.5 pr-3 rounded-full border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 transition"
+                className={`flex items-center gap-2.5 p-1.5 pr-3 rounded-full border transition ${isTamilNaduRoute ? 'border-[#f2c770]/40 bg-white/5 hover:border-[#f2c770]' : 'border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500'}`}
               >
                 <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-600 to-blue-600 flex items-center justify-center text-white font-bold text-sm">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
-                <span className="text-sm font-semibold text-slate-800 dark:text-slate-200 max-w-[100px] truncate">
+                <span className={`text-sm font-semibold max-w-[100px] truncate ${isTamilNaduRoute ? 'text-white' : 'text-slate-800 dark:text-slate-200'}`}>
                   {user.name.split(' ')[0]}
                 </span>
               </button>

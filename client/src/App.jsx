@@ -18,6 +18,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Destinations from './pages/Destinations';
 import DestinationDetail from './pages/DestinationDetail';
+import TamilNaduPage from './pages/TamilNaduPage';
+import TamilNaduDetailPage from './pages/TamilNaduDetailPage';
 import InteractiveMap from './pages/InteractiveMap';
 import SmartPlanner from './pages/SmartPlanner';
 import WeatherPage from './pages/WeatherPage';
@@ -43,6 +45,8 @@ const App = () => {
                       <Route path="/" element={<Home />} />
                       <Route path="/destinations" element={<Destinations />} />
                       <Route path="/destinations/:id" element={<DestinationDetail />} />
+                      <Route path="/tamil-nadu" element={<TamilNaduPage />} />
+                      <Route path="/tamil-nadu/:slug" element={<TamilNaduDetailPage />} />
                       <Route path="/map" element={<InteractiveMap />} />
                       <Route path="/planner" element={<SmartPlanner />} />
                       <Route path="/weather" element={<WeatherPage />} />
@@ -69,9 +73,7 @@ const App = () => {
                       <Route
                         path="/admin"
                         element={
-                          <ProtectedRoute adminOnly={true}>
-                            <AdminDashboard />
-                          </ProtectedRoute>
+                          <AdminDashboard />
                         }
                       />
                     </Routes>

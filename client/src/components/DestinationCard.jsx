@@ -89,7 +89,7 @@ const DestinationCard = ({ destination }) => {
         <div>
           <div className="flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400 mb-1">
             <FiMapPin className="text-sm" />
-            <span>{destination.district}, Jharkhand</span>
+            <span>{destination.district}, {destination.state === 'tamilnadu' ? 'Tamil Nadu' : 'Jharkhand'}</span>
           </div>
 
           <Link to={`/destinations/${destination.id}`}>

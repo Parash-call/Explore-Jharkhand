@@ -9,18 +9,20 @@ const Destinations = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialCategory = searchParams.get('category') || 'all';
   const initialSearch = searchParams.get('search') || '';
+  const initialState = searchParams.get('state') || 'jharkhand';
 
   const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState(initialCategory);
   const [search, setSearch] = useState(initialSearch);
+  const [state, setState] = useState(initialState);
   const [district, setDistrict] = useState('all');
   const [sortBy, setSortBy] = useState('default');
 
   const fetchDestinations = async () => {
     try {
       setLoading(true);
-      let query = `/destinations?category=${category}&district=${district}&sort=${sortBy}`;
+      let query = `/destinations?state=${state}&category=${category}&district=${district}&sort=${sortBy}`;
       if (search) {
         query += `&search=${encodeURIComponent(search)}`;
       }
@@ -37,7 +39,7 @@ const Destinations = () => {
 
   useEffect(() => {
     fetchDestinations();
-  }, [category, district, sortBy, search]);
+  }, [state, category, district, sortBy, search]);
 
   const categories = [
     { id: 'all', name: 'All Category' },
@@ -49,15 +51,39 @@ const Destinations = () => {
     { id: 'adventure', name: 'Adventure & Valleys' }
   ];
 
-  const districts = ['all', 'Ranchi', 'Deoghar', 'Palamu', 'Ramgarh'];
+  const districts = state === 'tamilnadu'
+    ? ['all', 'Chennai', 'Madurai', 'Coimbatore', 'Nilgiris', 'Kanyakumari', 'Chengalpattu', 'Ramanathapuram', 'Tiruchirappalli', 'Dindigul', 'Salem', 'Dharmapuri', 'Tenkasi', 'Cuddalore', 'Villupuram', 'Vellore', 'Thanjavur']
+    : ['all', 'Ranchi', 'Deoghar', 'Palamu', 'Ramgarh'];
+
+  const stateOptions = [
+    { id: 'jharkhand', label: 'Jharkhand' },
+    { id: 'tamilnadu', label: 'Tamil Nadu' }
+  ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       
       {/* Header */}
       <div>
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          {stateOptions.map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              onClick={() => setState(option.id)}
+              className={`px-4 py-2 rounded-full text-xs font-bold transition ${
+                state === option.id
+                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+
         <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-          Jharkhand Tourism Directory
+          {state === 'tamilnadu' ? 'Tamil Nadu Tourism Directory' : 'Jharkhand Tourism Directory'}
         </span>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white mt-1">
           Explore Destinations & Attractions
@@ -120,7 +146,7 @@ const Destinations = () => {
               key={cat.id}
               onClick={() => {
                 setCategory(cat.id);
-                setSearchParams({ category: cat.id, search });
+                setSearchParams({ state, category: cat.id, search });
               }}
               className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition ${
                 category === cat.id

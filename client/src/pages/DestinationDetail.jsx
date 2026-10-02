@@ -280,9 +280,33 @@ const DestinationDetail = () => {
 
         </div>
 
-        {/* Right Sidebar: Live Weather & Mini Map */}
+        {/* Right Sidebar: Live Weather, Booking Card & Mini Map */}
         <div className="lg:col-span-4 space-y-6">
           
+          {/* Quick Experience Booking Card */}
+          <div className="p-6 rounded-3xl glass-card border border-slate-200 dark:border-slate-800 shadow-xl space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+                  Instant Experience
+                </span>
+                <h4 className="text-lg font-extrabold text-slate-900 dark:text-white">Certified Local Guide / Stay</h4>
+              </div>
+              <span className="px-3 py-1 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-extrabold text-sm">
+                From ₹800
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Book certified eco-tour guides and authentic tribal homestays with zero cancellation fee and instant confirmation.
+            </p>
+            <button
+              onClick={() => setBookingModalOpen(true)}
+              className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-blue-700 text-white font-extrabold text-sm shadow-lg shadow-emerald-600/30 hover:scale-[1.02] active:scale-95 transition"
+            >
+              Book Guide / Homestay Now
+            </button>
+          </div>
+
           <WeatherCard city={destination.district} />
 
           <div className="h-[300px]">

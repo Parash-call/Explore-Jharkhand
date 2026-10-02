@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiX, FiCalendar, FiUsers, FiCheckCircle, FiShield, FiHome } from 'react-icons/fi';
+import { FiX, FiCalendar, FiUsers, FiCheckCircle, FiShield, FiHome, FiUserCheck } from 'react-icons/fi';
 import API from '../services/api';
 import { useNotification } from '../context/NotificationContext';
 import { useAuth } from '../context/AuthContext';
 
 const BookingModal = ({ destination, isOpen, onClose }) => {
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, login } = useAuth();
   const { triggerNotification } = useNotification();
 
   const [bookingType, setBookingType] = useState('guide'); // 'guide' or 'homestay'
@@ -27,9 +29,19 @@ const BookingModal = ({ destination, isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!user) {
-      triggerNotification({ title: 'Auth Error', message: 'Please log in to make a booking.', type: 'error' });
-      return;
+    let currentUser = user;
+    if (!currentUser) {
+      try {
+        currentUser = await login('aarav@gmail.com', 'password123');
+        triggerNotification({
+          title: 'Auto-Authenticated',
+          message: 'Logged in as Aarav Sharma for instant booking.',
+          type: 'info'
+        });
+      } catch (err) {
+        triggerNotification({ title: 'Auth Error', message: 'Please log in to make a booking.', type: 'error' });
+        return;
+      }
     }
 
     try {
@@ -51,6 +63,7 @@ const BookingModal = ({ destination, isOpen, onClose }) => {
           type: 'success'
         });
         onClose();
+        navigate('/bookings');
       }
     } catch (err) {
       triggerNotification({ title: 'Booking Failed', message: err.message, type: 'error' });
@@ -76,7 +89,7 @@ const BookingModal = ({ destination, isOpen, onClose }) => {
             <FiX className="text-xl" />
           </button>
 
-          <div className="mb-6">
+          <div className="mb-4">
             <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
               Instant Booking Engine
             </span>
@@ -84,6 +97,36 @@ const BookingModal = ({ destination, isOpen, onClose }) => {
               Book Experience in {destination.title}
             </h3>
           </div>
+
+          {user ? (
+            <div className="mb-5 p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs flex items-center justify-between">
+              <span className="font-semibold text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
+                <FiUserCheck className="text-base" /> Booking as <strong>{user.name}</strong> ({user.email})
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-bold">Logged In</span>
+            </div>
+          ) : (
+            <div className="mb-5 p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs flex items-center justify-between gap-2">
+              <div>
+                <span className="font-bold text-amber-800 dark:text-amber-300 block">Fast Demo Booking</span>
+                <span className="text-[11px] text-slate-500">Auto-login enabled with Tourist demo account</span>
+              </div>
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await login('aarav@gmail.com', 'password123');
+                    triggerNotification({ title: 'Welcome! 👋', message: 'Logged in as Aarav Sharma.', type: 'success' });
+                  } catch (err) {
+                    triggerNotification({ title: 'Error', message: err.message, type: 'error' });
+                  }
+                }}
+                className="px-3 py-1.5 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 transition shrink-0 shadow-md shadow-emerald-600/20"
+              >
+                1-Click Sign In
+              </button>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             

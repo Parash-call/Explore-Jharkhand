@@ -78,7 +78,7 @@ const Bookings = () => {
             >
               <div className="flex items-start gap-4">
                 <img
-                  src={booking.destination_image || 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=1000&q=80'}
+                  src={booking.destination_image || 'https://commons.wikimedia.org/wiki/Special:FilePath/Hundru_Falls%2C_Jharkhand%2C_India.jpg?width=1280'}
                   alt={booking.title}
                   className="w-20 h-20 rounded-xl object-cover shrink-0"
                 />

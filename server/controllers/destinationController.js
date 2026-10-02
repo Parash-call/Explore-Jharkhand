@@ -1,10 +1,35 @@
+const realJharkhandPhotos = {
+  'hundru-falls': 'https://commons.wikimedia.org/wiki/Special:FilePath/Hundru_Falls%2C_Jharkhand%2C_India.jpg?width=1280',
+  'dassam-falls': 'https://commons.wikimedia.org/wiki/Special:FilePath/Dassam_Falls%2C_Jharkhand%2C_India_01.jpg?width=1280',
+  'betla-national-park': 'https://commons.wikimedia.org/wiki/Special:FilePath/Forest_in_Betla_National_Park_2025.jpg?width=1280',
+  'baidyanath-temple-deoghar': 'https://commons.wikimedia.org/wiki/Special:FilePath/Baba_Baidyanath_Jyotirlinga_Temple.jpg?width=1280',
+  'sarhul-festival': 'https://commons.wikimedia.org/wiki/Special:FilePath/Sarhul_Festival_Celebration_In_Central_University_Of_Jharkhand_%2CBrambe_Campus%2C_Ranchi.jpg?width=1280',
+  'dhuska-rugra-food': 'https://commons.wikimedia.org/wiki/Special:FilePath/Dhuska-Jharkhand.jpg?width=1280',
+  'patratu-valley': 'https://commons.wikimedia.org/wiki/Special:FilePath/Patratu_Valley_at_night.jpg?width=1280'
+};
+
+const applyRealJharkhandPhoto = (destination) => {
+  const realPhoto = realJharkhandPhotos[destination.slug];
+
+  if (!realPhoto) {
+    return destination;
+  }
+
+  return {
+    ...destination,
+    image_url: realPhoto,
+    gallery: JSON.stringify([realPhoto])
+  };
+};
+
 const { query } = require('../config/db');
 
 exports.getAllDestinations = async (req, res, next) => {
   try {
-    const { category, district, search, sort } = req.query;
-    let sql = 'SELECT * FROM destinations WHERE 1=1';
-    const params = [];
+    const { category, district, search, sort, state } = req.query;
+    const selectedState = state && ['jharkhand', 'tamilnadu'].includes(state) ? state : 'jharkhand';
+    let sql = 'SELECT * FROM destinations WHERE 1=1 AND state = ?';
+    const params = [selectedState];
 
     if (category && category !== 'all') {
       sql += ' AND category = ?';
@@ -31,7 +56,12 @@ exports.getAllDestinations = async (req, res, next) => {
     }
 
     const [destinations] = await query(sql, params);
-    res.json({ success: true, count: destinations.length, destinations });
+    res.json({
+      success: true,
+      count: destinations.length,
+      destinations: destinations.map(applyRealJharkhandPhoto),
+      state: selectedState
+    });
   } catch (error) {
     next(error);
   }
@@ -46,7 +76,7 @@ exports.getDestinationById = async (req, res, next) => {
       return res.status(404).json({ success: false, message: 'Destination not found.' });
     }
 
-    const destination = destinations[0];
+    const destination = applyRealJharkhandPhoto(destinations[0]);
     
     // Fetch associated reviews
     const [reviews] = await query(
@@ -81,15 +111,15 @@ exports.createDestination = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Please fill in all required destination fields.' });
     }
 
-    const img = req.file ? `/uploads/${req.file.filename}` : (image_url || 'https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=1000&q=80');
+    const img = req.file ? `/uploads/${req.file.filename}` : (image_url || 'https://commons.wikimedia.org/wiki/Special:FilePath/Hundru_Falls%2C_Jharkhand%2C_India.jpg?width=1280');
 
     const slug = title.toLowerCase().replace(/[^a-z0-9]/g, '-');
 
     const [result] = await query(
       `INSERT INTO destinations 
-       (title, slug, category, description, location_name, district, latitude, longitude, image_url, opening_hours, entry_fee, best_time)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [title, slug, category, description, location_name, district, latitude, longitude, img, opening_hours || '8:00 AM - 5:00 PM', entry_fee || 0, best_time || 'October to March']
+       (title, slug, category, description, location_name, district, latitude, longitude, image_url, opening_hours, entry_fee, best_time, state)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [title, slug, category, description, location_name, district, latitude, longitude, img, opening_hours || '8:00 AM - 5:00 PM', entry_fee || 0, best_time || 'October to March', 'jharkhand']
     );
 
     res.status(201).json({

@@ -37,6 +37,7 @@ CREATE TABLE destinations (
     district VARCHAR(100) NOT NULL,
     latitude DECIMAL(10, 8) NOT NULL,
     longitude DECIMAL(11, 8) NOT NULL,
+    state VARCHAR(30) NOT NULL DEFAULT 'jharkhand',
     image_url VARCHAR(500) NOT NULL,
     gallery JSON DEFAULT NULL,
     opening_hours VARCHAR(100) DEFAULT ' sunrise to sunset ',

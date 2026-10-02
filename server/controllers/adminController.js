@@ -3,19 +3,20 @@ const { query } = require('../config/db');
 exports.getAdminStats = async (req, res, next) => {
   try {
     const [userCount] = await query('SELECT COUNT(*) as totalUsers FROM users');
-    const [destCount] = await query('SELECT COUNT(*) as totalDestinations FROM destinations');
+    const [destCount] = await query("SELECT COUNT(*) as totalDestinations FROM destinations WHERE state = 'jharkhand'");
     const [reviewCount] = await query('SELECT COUNT(*) as totalReviews FROM reviews');
     const [bookingCount] = await query('SELECT COUNT(*) as totalBookings FROM bookings');
 
     const [categoryBreakdown] = await query(
-      'SELECT category, COUNT(*) as count FROM destinations GROUP BY category'
+      "SELECT category, COUNT(*) as count FROM destinations WHERE state = 'jharkhand' GROUP BY category"
     );
 
     const [recentBookings] = await query(
       `SELECT b.*, u.name as user_name, d.title as destination_title 
        FROM bookings b 
        JOIN users u ON b.user_id = u.id 
-       JOIN destinations d ON b.destination_id = d.id 
+      JOIN destinations d ON b.destination_id = d.id
+      WHERE d.state = 'jharkhand'
        ORDER BY b.created_at DESC LIMIT 5`
     );
 
